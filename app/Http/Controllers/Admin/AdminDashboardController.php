@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
+
     protected $orderRepository;
 
     public function __construct(OrderRepository $orderRepository)
@@ -86,9 +87,7 @@ class AdminDashboardController extends Controller
         ));
     }
 
-    /**
-     * Get monthly revenue data
-     */
+
     private function getMonthlyRevenue()
     {
         $revenue = [];
@@ -107,9 +106,7 @@ class AdminDashboardController extends Controller
         return $revenue;
     }
 
-    /**
-     * Get daily orders for current week
-     */
+
     private function getDailyOrders()
     {
         $orders = [];
@@ -125,9 +122,7 @@ class AdminDashboardController extends Controller
         return $orders;
     }
 
-    /**
-     * Get recent activities
-     */
+
     private function getRecentActivities()
     {
         $activities = [];

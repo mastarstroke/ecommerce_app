@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,13 +13,15 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    use LogsActivity;
+
 
     public function showRegistrationForm()
     {
         return view('auth.register');
     }
 
-    
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -30,7 +33,9 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $user = User::create([
@@ -40,9 +45,21 @@ class AuthController extends Controller
             'phone' => $request->phone,
         ]);
 
+        // Log registration
+        $this->logActivity(
+            'registered',
+            'auth',
+            "New user registered: {$user->name} ({$user->email})",
+            null,
+            $user->toArray(),
+            null,
+            'success'
+        );
+
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Welcome to ShopHub! Your account has been created successfully.');
+        return redirect()->route('dashboard')
+            ->with('success', 'Welcome to ShopHub! Your account has been created successfully.');
     }
 
 
@@ -61,7 +78,9 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $credentials = $request->only('email', 'password');
@@ -70,6 +89,17 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             $user = Auth::user();
+            
+            // Log successful login
+            $this->logActivity(
+                'login',
+                'auth',
+                "User logged in successfully: {$user->name} ({$user->email})",
+                null,
+                ['user_id' => $user->id, 'user_email' => $user->email],
+                ['ip' => $request->ip(), 'user_agent' => $request->userAgent()],
+                'success'
+            );
 
             if ($user->is_admin) {
                 return redirect()->route('admin.dashboard')
@@ -80,6 +110,17 @@ class AuthController extends Controller
                 ->with('success', 'Welcome back, ' . $user->name . '!');
         }
 
+        // Log failed login attempt
+        $this->logActivity(
+            'login_failed',
+            'auth',
+            "Failed login attempt for email: {$request->email}",
+            null,
+            null,
+            ['ip' => $request->ip(), 'user_agent' => $request->userAgent()],
+            'failed'
+        );
+
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
@@ -88,6 +129,21 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = auth()->user();
+        
+        if ($user) {
+            // Log logout
+            $this->logActivity(
+                'logout',
+                'auth',
+                "User logged out: {$user->name} ({$user->email})",
+                null,
+                ['user_id' => $user->id],
+                null,
+                'success'
+            );
+        }
+        
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -113,9 +169,31 @@ class AuthController extends Controller
             $request->only('email')
         );
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with(['success' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+        if ($status === Password::RESET_LINK_SENT) {
+            $this->logActivity(
+                'password_reset_requested',
+                'auth',
+                "Password reset requested for email: {$request->email}",
+                null,
+                null,
+                ['email' => $request->email],
+                'success'
+            );
+            
+            return back()->with(['success' => __($status)]);
+        }
+
+        $this->logActivity(
+            'password_reset_failed',
+            'auth',
+            "Failed password reset request for email: {$request->email}",
+            null,
+            null,
+            ['email' => $request->email, 'error' => __($status)],
+            'failed'
+        );
+
+        return back()->withErrors(['email' => __($status)]);
     }
 
 
@@ -139,11 +217,24 @@ class AuthController extends Controller
                 $user->forceFill([
                     'password' => Hash::make($password)
                 ])->save();
+                
+                // Log password reset
+                $this->logActivity(
+                    'password_reset',
+                    'auth',
+                    "Password reset for user: {$user->name} ({$user->email})",
+                    null,
+                    ['user_id' => $user->id],
+                    null,
+                    'success'
+                );
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('success', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('login')->with('success', __($status));
+        }
+
+        return back()->withErrors(['email' => [__($status)]]);
     }
 }

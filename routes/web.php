@@ -68,12 +68,15 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
-    
     // Order Management
-    Route::get('/orders/update-status/{id}/{status}', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
-    Route::resource('orders', AdminOrderController::class);
-    Route::put('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
-    Route::put('/orders/{id}/payment', [AdminOrderController::class, 'updatePaymentStatus'])->name('orders.update-payment');
+    Route::get('/orders', [App\Http\Controllers\Admin\AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{id}', [App\Http\Controllers\Admin\AdminOrderController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{id}/status', [App\Http\Controllers\Admin\AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::put('/orders/{id}/payment', [App\Http\Controllers\Admin\AdminOrderController::class, 'updatePaymentStatus'])->name('orders.update-payment');
+    Route::delete('/orders/{id}', [App\Http\Controllers\Admin\AdminOrderController::class, 'destroy'])->name('orders.destroy');
+    Route::get('/orders/export/csv', [App\Http\Controllers\Admin\AdminOrderController::class, 'export'])->name('orders.export');
+    Route::post('/orders/bulk-update', [App\Http\Controllers\Admin\AdminOrderController::class, 'bulkUpdateStatus'])->name('orders.bulk-update');
+    Route::get('/orders/stats/json', [App\Http\Controllers\Admin\AdminOrderController::class, 'getStats'])->name('orders.stats');
 
     // Product Management
     Route::get('/products/toggle-status/{id}', [AdminProductController::class, 'toggleStatus'])->name('products.toggle-status');
@@ -92,6 +95,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users/impersonate/{id}', [AdminUserController::class, 'impersonate'])->name('users.impersonate');
     Route::get('/users/stop-impersonate', [AdminUserController::class, 'stopImpersonate'])->name('users.stop-impersonate');
     Route::resource('users', AdminUserController::class);
+
+
+    // Activity Monitor Routes
+    Route::get('/monitor', [App\Http\Controllers\Admin\ActivityMonitorController::class, 'index'])->name('monitor.index');
+    Route::get('/monitor/stats', [App\Http\Controllers\Admin\ActivityMonitorController::class, 'getStats'])->name('monitor.stats');
+    Route::get('/monitor/feed', [App\Http\Controllers\Admin\ActivityMonitorController::class, 'getFeed'])->name('monitor.feed');
+    Route::get('/monitor/export', [App\Http\Controllers\Admin\ActivityMonitorController::class, 'export'])->name('monitor.export');
+    Route::post('/monitor/clear-old', [App\Http\Controllers\Admin\ActivityMonitorController::class, 'clearOld'])->name('monitor.clear-old');
+    Route::get('/monitor/{id}', [App\Http\Controllers\Admin\ActivityMonitorController::class, 'show'])->name('monitor.show');
     
 });
 

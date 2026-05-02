@@ -104,6 +104,9 @@
                         <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                             <i class="fas fa-users"></i> Users
                         </a>
+                        <a class="nav-link {{ request()->routeIs('admin.monitor.*') ? 'active' : '' }}" href="{{ route('admin.monitor.index') }}">
+                            <i class="fas fa-chart-line"></i> Activity Monitor
+                        </a>
                     </nav>
                 </div>
             </div>
