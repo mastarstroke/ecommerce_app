@@ -89,9 +89,6 @@ class CartController extends Controller
     }
 
 
-    /**
-     * Update cart item quantity via AJAX
-     */
     public function update(Request $request, $itemId)
     {
         try {
@@ -115,8 +112,7 @@ class CartController extends Controller
                 ]);
             }
 
-            return redirect()->route('cart.index')
-                            ->with('success', 'Cart updated successfully!');
+            return redirect()->route('cart.index')->with('success', 'Cart updated successfully!');
                             
         } catch (\Exception $e) {
             Log::error('Cart update error: ' . $e->getMessage());
@@ -133,9 +129,6 @@ class CartController extends Controller
         }
     }
 
-    /**
-     * Remove item from cart via AJAX
-     */
     public function remove(Request $request, $itemId)
     {
         try {
@@ -153,8 +146,7 @@ class CartController extends Controller
                 ]);
             }
 
-            return redirect()->route('cart.index')
-                            ->with('success', 'Item removed from cart!');
+            return redirect()->route('cart.index')->with('success', 'Item removed from cart!');
                             
         } catch (\Exception $e) {
             Log::error('Cart remove error: ' . $e->getMessage());
@@ -166,14 +158,10 @@ class CartController extends Controller
                 ], 422);
             }
             
-            return redirect()->back()
-                            ->with('error', $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    /**
-     * Get cart count via AJAX
-     */
     public function getCartCount(Request $request)
     {
         $count = $this->cartService->getCartCount();
@@ -188,9 +176,6 @@ class CartController extends Controller
         return $count;
     }
 
-    /**
-     * Get full cart summary via AJAX
-     */
     public function getCartSummary(Request $request)
     {
         $cart = $this->cartService->getCartSummary();

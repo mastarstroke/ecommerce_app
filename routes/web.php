@@ -28,7 +28,7 @@ Route::put('/cart/update/{item}', [CartController::class, 'update'])->name('cart
 Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
 
-// Authentication routes (custom)
+// Authentication routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -96,7 +96,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 
-// routes/web.php - Add this temporary debug route
+// temporary debug cart route
 Route::get('/debug-cart-status', function() {
     $cartService = app(\App\Services\CartService::class);
     $summary = $cartService->getCartSummary();

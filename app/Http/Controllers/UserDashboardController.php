@@ -66,9 +66,7 @@ class UserDashboardController extends Controller
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
 
-    /**
-     * Update password
-     */
+
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -89,9 +87,7 @@ class UserDashboardController extends Controller
         return redirect()->back()->with('success', 'Password updated successfully!');
     }
 
-    /**
-     * Update avatar
-     */
+
     public function updateAvatar(Request $request)
     {
         $request->validate([
@@ -111,9 +107,7 @@ class UserDashboardController extends Controller
         return redirect()->back()->with('success', 'Profile picture updated successfully!');
     }
 
-    /**
-     * Add to wishlist
-     */
+
     public function addToWishlist($productId)
     {
         $wishlist = session()->get('wishlist', []);
@@ -129,9 +123,7 @@ class UserDashboardController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
-    /**
-     * Remove from wishlist
-     */
+
     public function removeFromWishlist($productId)
     {
         $wishlist = session()->get('wishlist', []);

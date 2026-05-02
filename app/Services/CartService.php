@@ -16,7 +16,7 @@ class CartService
 
     public function __construct()
     {
-        // Don't initialize in constructor - lazy load
+        // Cart will be initialized lazily when needed
     }
 
 
@@ -28,11 +28,10 @@ class CartService
 
         try {
             if (Auth::check()) {
-                // FOR LOGGED IN USERS - Get existing cart or create ONE
                 $this->cart = Cart::where('user_id', Auth::id())->first();
                 
+                // FOR USER - Get existing cart or create ONE
                 if (!$this->cart) {
-                    // Create only ONE cart for this user
                     $this->cart = Cart::create([
                         'user_id' => Auth::id(),
                         'session_id' => null
@@ -73,9 +72,7 @@ class CartService
         }
     }
 
-    /**
-     * Add item to cart
-     */
+
     public function addItem(Product $product, int $quantity = 1, array $attributes = []): array
     {
         $this->initializeCart();
@@ -127,9 +124,7 @@ class CartService
         }
     }
 
-    /**
-     * Update cart item quantity
-     */
+
     public function updateQuantity(int $itemId, int $quantity): array
     {
         $this->initializeCart();
@@ -163,9 +158,7 @@ class CartService
         }
     }
 
-    /**
-     * Remove item from cart
-     */
+
     public function removeItem(int $itemId): array
     {
         $this->initializeCart();
@@ -186,9 +179,7 @@ class CartService
         }
     }
 
-    /**
-     * Clear entire cart
-     */
+
     public function clearCart(): array
     {
         $this->initializeCart();
@@ -206,9 +197,7 @@ class CartService
         }
     }
 
-    /**
-     * Get cart summary with all calculations
-     */
+
     public function getCartSummary(): array
     {
         $this->initializeCart();
@@ -220,7 +209,7 @@ class CartService
             
             foreach ($this->cart->items as $item) {
                 if (!$item->product) {
-                    continue; // Skip if product doesn't exist
+                    continue;
                 }
                 
                 $itemTotal = $item->product->price * $item->quantity;

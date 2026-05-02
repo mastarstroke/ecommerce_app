@@ -30,9 +30,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $user = User::create([
@@ -44,21 +42,16 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')
-            ->with('success', 'Welcome to ShopHub! Your account has been created successfully.');
+        return redirect()->route('dashboard')->with('success', 'Welcome to ShopHub! Your account has been created successfully.');
     }
 
-    /**
-     * Show login form
-     */
+
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Login user
-     */
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -68,9 +61,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $credentials = $request->only('email', 'password');
@@ -94,9 +85,7 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    /**
-     * Logout user
-     */
+
     public function logout(Request $request)
     {
         Auth::logout();
@@ -107,17 +96,13 @@ class AuthController extends Controller
             ->with('success', 'You have been logged out successfully.');
     }
 
-    /**
-     * Show forgot password form
-     */
+
     public function showForgotForm()
     {
         return view('auth.forgot-password');
     }
 
-    /**
-     * Send password reset link
-     */
+
     public function sendResetLink(Request $request)
     {
         $request->validate([
@@ -133,17 +118,13 @@ class AuthController extends Controller
             : back()->withErrors(['email' => __($status)]);
     }
 
-    /**
-     * Show reset password form
-     */
+
     public function showResetForm($token)
     {
         return view('auth.reset-password', ['token' => $token]);
     }
 
-    /**
-     * Reset password
-     */
+
     public function resetPassword(Request $request)
     {
         $request->validate([
