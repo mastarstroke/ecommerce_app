@@ -293,25 +293,3 @@ cart_items - Cart line items
 
 activity_logs - System activity tracking
 
-### Deployment Guide
-
-Production Deployment
-
-Set Production Environment
-
-bash
-APP_ENV=production
-APP_DEBUG=false
-Optimize Laravel
-
-bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan optimize
-Set Proper Permissions
-
-bash
-chmod -R 775 storage
-chmod -R 775 bootstrap/cache
-Configure Web Server (Apache)
