@@ -172,12 +172,6 @@ class CheckoutController extends Controller
                 'success'
             );
             
-            Log::info('Checkout completed', [
-                'user_id' => auth()->id(),
-                'order_id' => $order->id,
-                'order_number' => $order->order_number
-            ]);
-            
             return response()->json([
                 'success' => true,
                 'message' => 'Order placed successfully!',

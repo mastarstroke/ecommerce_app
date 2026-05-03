@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Sanctum::ignoreMigrations();
+        
         // Bind CartService as a singleton to prevent multiple instances
         $this->app->singleton(CartService::class, function ($app) {
             return new CartService();

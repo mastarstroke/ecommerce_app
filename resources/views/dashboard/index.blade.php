@@ -49,15 +49,7 @@
                     <a href="{{ route('profile.edit') }}" class="list-group-item list-group-item-action">
                         <i class="fas fa-user-edit me-2"></i> Profile Settings
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <i class="fas fa-heart me-2"></i> Wishlist
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <i class="fas fa-address-book me-2"></i> Address Book
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <i class="fas fa-bell me-2"></i> Notifications
-                    </a>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="list-group-item list-group-item-action text-danger">
@@ -140,7 +132,6 @@
                                 </thead>
                                 <tbody>
                                     @foreach($recentOrders as $order)
-                                        <td>
                                             <td><strong>#{{ $order->order_number }}</strong></td>
                                             <td>{{ $order->created_at->format('M d, Y') }}</td>
                                             <td>${{ number_format($order->total, 2) }}</td>

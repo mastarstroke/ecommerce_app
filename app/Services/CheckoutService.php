@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +68,7 @@ class CheckoutService
                 ]);
                 
                 // Update product stock
-                $product = \App\Models\Product::find($item['product_id']);
+                $product = Product::find($item['product_id']);
                 if ($product) {
                     $product->decrement('stock_quantity', $item['quantity']);
                 }

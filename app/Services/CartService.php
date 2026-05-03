@@ -262,9 +262,7 @@ class CartService
         }
     }
 
-    /**
-     * Get cart item count
-     */
+
     public function getCartCount(): int
     {
         $this->initializeCart();
@@ -276,18 +274,14 @@ class CartService
         }
     }
 
-    /**
-     * Get raw cart object
-     */
+
     public function getCart()
     {
         $this->initializeCart();
         return $this->cart;
     }
 
-    /**
-     * Get cart items
-     */
+
     public function getCartItems()
     {
         $this->initializeCart();
